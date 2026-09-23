@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Confession</title>
+    <style>
+        /* Centers everything and sets the light purple background */
+        body {
+            background-color: #E6E6FA; /* Soft Lavender / Light Purple */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            color: #33334d;
+            text-align: center;
+        }
+
+        /* Container that stretches out the text to cover the page beautifully */
+        .content-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Large, prominent heading matching your layout */
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #4b0082; /* Indigo twist for the main title */
+        }
+
+        /* Bold question styling */
+        h2 {
+            font-size: 2.2rem;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            color: #4b0082;
+        }
+
+        /* Large, easily readable paragraphs spread across the screen */
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        /* Styling for the choices section */
+        .button-group {
+            margin-top: 30px;
+        }
+
+        /* Pretty, clickable response buttons */
+        button {
+            font-size: 1.3rem;
+            padding: 15px 35px;
+            margin: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-yes {
+            background-color: #ff4d6d;
+            color: white;
+        }
+
+        .btn-no {
+            background-color: #ffffff;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content-container">
+        <h1>Hi Yu Chen</h1>
+
+        <p>So you've actually been that crush all along. You probably don't like me, but I'm glad I told you since it's been a while now.</p>
+
+        <p>I just want to know what you think about dating me. I'm too scared to ask you directly, so I'm using this website I coded to know your answer.</p>
+
+        <p>Whatever the answer is, I hope we can still be friends.</p>
+
+        <h2>Would you want to date me?</h2>
+
+        <!-- Formspree Setup Integrated -->
+        <form id="confessionForm" action="https://formspree.io" method="POST">
+            
+            <!-- Hidden field that logs the final answer to Formspree -->
+            <input type="hidden" name="Answer" id="crushAnswer" value="">
+            
+            <!-- Standard Interactive Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn-yes" onclick="submitAnswer('Yes')">Yes</button>
+                <button type="button" class="btn-no" onclick="submitAnswer('No')">No</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        function submitAnswer(choice) {
+            // Set the hidden input value to the button pressed
+            document.getElementById('crushAnswer').value = choice;
+            
+            const form = document.getElementById('confessionForm');
+
+            // Send data to Formspree silently in the background
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(() => {
+                // Redirect to yes.html ONLY if they clicked Yes
+                if (choice === 'Yes') {
+                    window.location.href = 'yes.html';
+                } else {
+                    alert("Thank you for being honest! I'm glad we can still be friends.");
+                }
+            })
+            .catch(() => {
+                // Fallback redirect if network lags or fails
+                if (choice === 'Yes') {
+                    window.location.href = 'yes.html';
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
