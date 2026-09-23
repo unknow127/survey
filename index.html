@@ -71,8 +71,6 @@
         /* Buttons Setup */
         .button-group {
             margin-top: 30px;
-            position: relative;
-            min-height: 80px;
         }
         button {
             font-size: 1.3rem;
@@ -95,7 +93,6 @@
         .btn-no {
             background-color: #ffffff;
             color: #666;
-            transition: all 0.1s ease;
         }
 
         /* Screen 3: Success Animation */
@@ -141,11 +138,13 @@
         
         <h2 class="question-title">Would you want to date me?</h2>
 
-        <form id="confessionForm" action="https://formspree.io" method="POST">
+        <!-- Your exact Formspree endpoint is configured here -->
+        <form id="confessionForm" action="https://formspree.io/f/mnpndwde" method="POST">
+            <!-- This hidden input tracks the choice made -->
             <input type="hidden" name="Answer" id="crushAnswer" value="">
             <div class="button-group">
                 <button type="button" class="btn-yes" onclick="submitAnswer('Yes')">Yes</button>
-                <button type="button" id="noBtn" class="btn-no" onclick="submitAnswer('No')" onmouseover="fleeNoButton()">No</button>
+                <button type="button" class="btn-no" onclick="submitAnswer('No')">No</button>
             </div>
         </form>
     </div>
@@ -159,7 +158,7 @@
     </div>
 
     <script>
-        // Smoothly transitions between sections without refreshing the page
+        // Transitions between sections without reloading the browser
         function showScreen(screenId) {
             document.querySelectorAll('.page-section').forEach(section => {
                 section.classList.remove('active');
@@ -167,7 +166,7 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Submits response secretly to Formspree
+        // Packages the button value and transmits it securely to Formspree
         function submitAnswer(choice) {
             document.getElementById('crushAnswer').value = choice;
             const form = document.getElementById('confessionForm');
@@ -185,24 +184,11 @@
                 }
             })
             .catch(() => {
+                // Fallback action ensures screen updates even during local testing lags
                 if (choice === 'Yes') {
                     showScreen('successScreen');
                 }
             });
-        }
-
-        // Trick function: Makes the No button dodge her cursor if she tries to click it!
-        function fleeNoButton() {
-            const noBtn = document.getElementById('noBtn');
-            // Change position strategy to free-floating relative to the viewport
-            noBtn.style.position = 'absolute';
-            
-            // Generate broad boundary ranges across the visible screen
-            const randomX = Math.floor(Math.random() * (window.innerWidth - 150));
-            const randomY = Math.floor(Math.random() * (window.innerHeight - 80));
-            
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
         }
     </script>
 
