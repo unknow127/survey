@@ -5,18 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome</title>
     <style>
+        /* Centers everything and sets the light purple background */
         body {
-            background-color: #E6E6FA; /* Light Purple */
+            background-color: #E6E6FA; /* Soft Lavender / Light Purple */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 40px 20px;
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
+            color: #33334d;
             text-align: center;
+            overflow-x: hidden;
         }
+
+        /* Container that stretches out the text to cover the page beautifully */
+        .content-container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* Hide all sections by default except the welcome link */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Screen 1: Welcome Link Style */
         .link-click {
             font-size: 2rem;
             color: #4b0082;
@@ -28,11 +49,162 @@
         .link-click:hover {
             color: #ff4d6d;
         }
+
+        /* Screen 2: Confession Typography */
+        h1.confession-title {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #4b0082;
+        }
+        h2.question-title {
+            font-size: 2.2rem;
+            margin-top: 40px;
+            margin-bottom: 30px;
+            color: #4b0082;
+        }
+        p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        /* Buttons Setup */
+        .button-group {
+            margin-top: 30px;
+            position: relative;
+            min-height: 80px;
+        }
+        button {
+            font-size: 1.3rem;
+            padding: 15px 35px;
+            margin: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .btn-yes {
+            background-color: #ff4d6d;
+            color: white;
+        }
+        .btn-no {
+            background-color: #ffffff;
+            color: #666;
+            transition: all 0.1s ease;
+        }
+
+        /* Screen 3: Success Animation */
+        h1.success-title {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #4b0082;
+            animation: heartbeat 1.2s infinite;
+        }
+        h2.success-subtitle {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            color: #ff4d6d;
+        }
+        .success-text {
+            font-size: 1.6rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.05); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
-    <a href="confession.html" class="link-click">click here</a>
+    <!-- SCREEN 1: WELCOME SCREEN -->
+    <div id="welcomeScreen" class="page-section active">
+        <a class="link-click" onclick="showScreen('confessionScreen')">click here</a>
+    </div>
+
+    <!-- SCREEN 2: CONFESSION SCREEN -->
+    <div id="confessionScreen" class="page-section content-container">
+        <h1 class="confession-title">Hi Yu Chen</h1>
+        <p>So you've actually been that crush all along. You probably don't like me, but I'm glad I told you since it's been a while now.</p>
+        <p>I just want to know what you think about dating me. I'm too scared to ask you directly, so I'm using this website I coded to know your answer.</p>
+        <p>Whatever the answer is, I hope we can still be friends.</p>
+        
+        <h2 class="question-title">Would you want to date me?</h2>
+
+        <form id="confessionForm" action="https://formspree.io" method="POST">
+            <input type="hidden" name="Answer" id="crushAnswer" value="">
+            <div class="button-group">
+                <button type="button" class="btn-yes" onclick="submitAnswer('Yes')">Yes</button>
+                <button type="button" id="noBtn" class="btn-no" onclick="submitAnswer('No')" onmouseover="fleeNoButton()">No</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- SCREEN 3: SUCCESS SCREEN -->
+    <div id="successScreen" class="page-section content-container">
+        <h1 class="success-title">YAY</h1>
+        <h2 class="success-subtitle">YAYYYYY ❤</h2>
+        <p class="success-text">I'm really happy you said yes! :)</p>
+        <p class="success-text">Thank you for giving me a chance</p>
+    </div>
+
+    <script>
+        // Smoothly transitions between sections without refreshing the page
+        function showScreen(screenId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Submits response secretly to Formspree
+        function submitAnswer(choice) {
+            document.getElementById('crushAnswer').value = choice;
+            const form = document.getElementById('confessionForm');
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(() => {
+                if (choice === 'Yes') {
+                    showScreen('successScreen');
+                } else {
+                    alert("Thank you for being honest! I'm glad we can still be friends.");
+                }
+            })
+            .catch(() => {
+                if (choice === 'Yes') {
+                    showScreen('successScreen');
+                }
+            });
+        }
+
+        // Trick function: Makes the No button dodge her cursor if she tries to click it!
+        function fleeNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            // Change position strategy to free-floating relative to the viewport
+            noBtn.style.position = 'absolute';
+            
+            // Generate broad boundary ranges across the visible screen
+            const randomX = Math.floor(Math.random() * (window.innerWidth - 150));
+            const randomY = Math.floor(Math.random() * (window.innerHeight - 80));
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+    </script>
 
 </body>
 </html>
